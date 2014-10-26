@@ -21,7 +21,7 @@
 
     vUv = uv;
     vec3 offset = vec3( time * .04 , time * .05 , time * .03);
-    vec3 noiseVec = position * .001 +offset;
+    vec3 noiseVec = position * .001 * (1.-uv.y * uv.y) +offset;
     vDisplacement = snoise( noiseVec );
 
     vec3 x = vec3( 1. , 0. , 0. );
@@ -29,8 +29,8 @@
     vec3 z = vec3( 0. , 0. , 1. );
 
     vNormalMat = normalMatrix;
-    vNormal = sNormal( position , x , y , z , 50. , .001 , .1 , offset );
-    vec3 pos = position + vec3( 0. , 0. , 50. ) * vDisplacement;
+    vNormal = sNormal( position , x , y , z , 100. * (1.-uv.y)  , .001 * (1.-uv.y * uv.y) , .1 , offset );
+    vec3 pos = position + vec3( 0. , 0. ,  100. * (1.-uv.y)  ) * vDisplacement;
 
     vec4 mvPosition = modelViewMatrix * vec4( pos, 1.0 );
     vec4 worldPosition = modelMatrix * vec4( pos, 1.0 );

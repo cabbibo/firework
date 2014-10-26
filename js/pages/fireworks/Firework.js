@@ -3,7 +3,7 @@ function Firework( page , params ){
   this.page = page;
   this.params = _.defaults( params || {} , {
 
-    size: 64,
+    size: 32,
     audio: null,
     vs: null,
     fs: null,
@@ -48,7 +48,26 @@ g('NO Fragment' ); }
 
   //scene.add( this.targetMarker );
   //
-  this.base = new THREE.Mesh(  new THREE.IcosahedronGeometry( 20 , 2 ) , new THREE.MeshNormalMaterial() );
+  //
+  this.baseMaterial = new THREE.ShaderMaterial({
+
+    uniforms:{
+      t_normal:     { type:"t" , value: G.TEXTURES['normal_water'] },
+      t_audio:      { type:"t" , value:this.audio.texture },
+      dpr:          G.dpr,//value: new THREE.Vector2( w*dpr , h*dpr ) },
+      timer:        G.timer,
+      alive: { type:"f" , value: 0 }
+    },
+
+    vertexShader: G.shaders.vs.fireworkBase,
+    fragmentShader: G.shaders.fs.fireworkBase,
+
+
+  });
+  this.base =new THREE.Mesh(  new THREE.IcosahedronGeometry( 50 , 2 ) , this.baseMaterial );
+
+  console.log( this.base );
+  // new THREE.Mesh(  new THREE.IcosahedronGeometry( 20 , 2 ) , new THREE.MeshNormalMaterial() );
 
   this.base.position.copy( this.start );
 
@@ -63,11 +82,18 @@ g('NO Fragment' ); }
   this.target = this.targetMarker.position;
   this.direction = new THREE.Vector3();
 
+  var marker= new THREE.Mesh( 
+      new THREE.IcosahedronGeometry( 100 , 0 ) , 
+      new THREE.MeshBasicMaterial()
+  );
+
+  //this.base.add( marker );
   console.log( 'THAIS');
   console.log( this.audio );
  
   this.uniforms = {
 
+    time:           G.timer,
     t_pos:          { type:"t"  , value: null },
     t_oPos:         { type:"t"  , value: null },
     t_audio:        { type:"t"  , value: this.audio.texture },
@@ -83,6 +109,8 @@ g('NO Fragment' ); }
     instant:        { type:"f"  , value: 0 }
 
   }
+
+this.baseMaterial.uniforms.alive = this.uniforms.alive;
  
   var mat = new THREE.ShaderMaterial({
 
@@ -145,8 +173,13 @@ Firework.prototype.randomExplosion = function( callback ){
   G.tmpV3.multiplyScalar( -1. );
   
   G.tmpV3.y = 200;
-  G.tmpV3.x -= (Math.random()) * 300;
-  G.tmpV3.z += (Math.random() -.5 ) * 300;
+
+ // G.tmpV3.x -= (Math.random()) * 300;
+ // G.tmpV3.z += (Math.random() -.5 ) * 300;
+
+  G.tmpV3.x = -this.start.x * Math.random() * .1;
+  G.tmpV3.z =-this.start.z * Math.random() * .1;
+
   var e = new THREE.Vector3();
   e.copy( G.tmpV3 );
 
@@ -175,7 +208,7 @@ Firework.prototype.explode = function( end , timeToExplode , timeToDissolve , ca
   this.uniforms.explosion.value = 0.;
   this.uniforms.alive.value     = 1.;
 
-  this.uniforms.explosionType.value = Math.random();
+  this.uniforms.explosionType.value = 1.;//Math.random();
 
   this.alive = true;
 
@@ -219,7 +252,7 @@ Firework.prototype.explode = function( end , timeToExplode , timeToDissolve , ca
 
       this.uniforms.exploded.value = 0.;
       this.uniforms.explosion.value = 0.;
-      this.uniforms.alive.value = 1.;
+      this.uniforms.alive.value = 0.;
 
       this.base.remove( this.body );
 

@@ -67,6 +67,9 @@ fireworks.addToInitArray( function(){
   this.loadShader( 'mirror' , f + 'vs-mirror' , 'vertex'     );
   this.loadShader( 'mirror' , f + 'fs-mirror' , 'fragment'   );
 
+  this.loadShader( 'fireworkBase' , f + 'vs-fireworkBase' , 'vertex'     );
+  this.loadShader( 'fireworkBase' , f + 'fs-fireworkBase' , 'fragment'   );
+
 
   var f = 'audio/global/';
 
@@ -115,13 +118,13 @@ fireworks.addToStartArray( function(){
 fireworks.addToStartArray( function(){
   //G.mani.deactivate();
 
- // G.mani.activate();
+  G.mani.activate();
   G.sol.activate();
 
  // var h = 
   /*this.water  = new Water(this , 0);
   this.water.body.rotation.x = -Math.PI / 2;*/
-  this.water  = new THREE.Mirror( G.renderer, G.camera, { clipBias: 0.3, textureWidth: G.windowSize.x * G.dpr.value , textureHeight:G.windowSize.y * G.dpr.value , color: 0x777777 } ); 
+  this.water  = new THREE.Mirror( G.renderer, G.camera, { clipBias: 0.3, textureWidth: G.windowSize.x * G.dpr.value, textureHeight:G.windowSize.y* G.dpr.value , color: 0x777777 } ); 
 //console.log( this.water );
 //  this.water.rotation.x = -Math.PI / 2;
 
@@ -157,27 +160,28 @@ fireworks.addToStartArray( function(){
 
   console.log('WAS');
   console.log( G );
-  for( var i = 0;i < this.audioArray.length; i++ ){
+  for( var i = 0;i < (this.audioArray.length*2); i++ ){
  
 
-    var audio = G.AUDIO[  this.audioArray[i] ];
+    var audio = G.AUDIO[  this.audioArray[i%this.audioArray.length]  ];
     audio.reconnect( this.gain );
 
     console.log( audio );
 
 
-    var t = ((i / this.audioArray.length )* .2 + .3 ) * 2 * Math.PI ;
+    var t = (i / (this.audioArray.length*2) ) * 2 * Math.PI ;
    // var x = (((i+.5) / this.audioArray.length) - .5 ) * 200;
 
     var array = Math.toCart( 600 , t );
     var start = new THREE.Vector3()
 
     start.x =array[0];//( Math.random() - .7 ) * 1000;
-    start.z =array[1] + 300;//( Math.random() - .3 ) * 1000;
-    start.y = 200;
+    start.z =array[1];//( Math.random() - .3 ) * 1000;
+    start.y = 100;
+
     var firework = new Firework( this ,{
       looper: this.looper,
-      size: 128,
+      size: 64,
       audio: audio,
       vs: G.shaders.vs.firework,
       fs: G.shaders.fs.firework,

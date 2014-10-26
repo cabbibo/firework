@@ -112,11 +112,48 @@ void main(){
       esp += vec3(sin(vUv.y* 100.) , cos( vUv.y*100. ) , sin( vUv.x * vUv.y * 100. ) )  * 5.;  
 
 
-    }else{
+    }else if( explosionType > .6 && explosionType < .9 ){
 
       esp += 4. * curlNoise( pos.xyz * .01 * sin(vUv.y) * cos(vUv.x));
 
+    }else if( explosionType > .9 && explosionType < .91 ){
+
+
+      esp +=  floor( vUv.y * vUv.x * 100. ) * direction * .1; //4. * curlNoise( pos.xyz * .01 * sin(vUv.y) * cos(vUv.x));
+     
+      float t =vUv.x * 3.14159 * 2.;
+    
+      vec3 x = vec3(0.);
+
+      x.x += sin( t ) * 4.;
+      x.z += cos( t ) * 4.;
+
+      esp += x;
+
+    }else{
+
+      vec3 di = vec3( 0. );
+      float c = floor( vUv.y * 6. );
+      if( c < 1. ){
+        di = vec3( 1. , 0. , 0. );
+      }else if( c < 2. && c > 1. ){
+        di = vec3( -1. , 0. , 0. );
+      }else if( c < 3. && c > 2. ){
+        di = vec3( 0. , 1. , 0. );
+      }else if( c < 4. && c > 3. ){
+        di = vec3( 0. , -1. , 0. );
+      }else if( c < 5. && c > 4. ){
+        di = vec3( 0. , 0. , 1. );
+      }else{
+        di = vec3( 0. , 0. , -1. );
+      }
+
+
+      esp +=  di * 10.; //4. * curlNoise( pos.xyz * .01 * sin(vUv.y) * cos(vUv.x));
+     
+
     }
+
 
     //wha:
     //vec3( vUv.x , vUv.y , length( vUv ) );
