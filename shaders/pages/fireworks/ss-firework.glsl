@@ -133,23 +133,24 @@ void main(){
     }else{
 
       vec3 di = vec3( 0. );
-      float c = floor( vUv.y * 6. );
+      float c = floor( vUv.y * 20. );
+
       if( c < 1. ){
         di = vec3( 1. , 0. , 0. );
-      }else if( c < 2. && c > 1. ){
+      }else if( c < 2. && c >= 1. ){
         di = vec3( -1. , 0. , 0. );
-      }else if( c < 3. && c > 2. ){
+      }else if( c < 3. && c >= 2. ){
         di = vec3( 0. , 1. , 0. );
-      }else if( c < 4. && c > 3. ){
+      }else if( c < 4. && c >= 3. ){
         di = vec3( 0. , -1. , 0. );
-      }else if( c < 5. && c > 4. ){
+      }else if( c < 5. && c >= 4. ){
         di = vec3( 0. , 0. , 1. );
       }else{
         di = vec3( 0. , 0. , -1. );
       }
 
 
-      esp +=  di * 10.; //4. * curlNoise( pos.xyz * .01 * sin(vUv.y) * cos(vUv.x));
+      esp +=  di * 1.; //4. * curlNoise( pos.xyz * .01 * sin(vUv.y) * cos(vUv.x));
      
 
     }
