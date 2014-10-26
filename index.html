@@ -1,0 +1,206 @@
+<html>
+  <title> For You. </title>
+  <head>
+    <link rel="stylesheet" type="text/css" href="css/main.css">
+
+    <style>
+ #container{ position:absolute; left:0px; top:0px; z-index:0; width:100%; height:100%; display:block; overflow:hidden; cursor: none;}
+    </style>
+  </head>
+
+  <body>
+    <div id="container"></div>
+
+    <script src="lib/leap.min.js"></script>
+    <script src="lib/three.js"></script>
+    <script src="lib/jquery.min.js"></script>
+    <script src="lib/stats.min.js"></script>
+    <script src="lib/dat.gui.min.js"></script>
+    <script src="lib/underscore.js"></script>
+    <script src="lib/Tween.js"></script>
+    
+    <script src="lib/ShaderLoader.js"></script>
+    <script src="lib/TrackballControls.js"></script>
+    <script src="lib/TileRenderer.js"></script>
+    <script src="lib/FileSaver.js"></script>
+
+    <script src="lib/AudioController.js"></script>
+    <script src="lib/AudioTexture.js"></script>
+    <script src="lib/LoadedAudio.js"></script>
+    <script src="lib/UserAudio.js"></script>
+    <script src="lib/Looper.js"></script>
+
+    <script src="lib/TextParticles.js"></script>
+    <script src="lib/TextCreator.js"></script>
+
+    <script src="lib/ObjectControls.js"></script>
+    <script src="lib/RiggedSkeleton.js"></script>
+
+    <script src="lib/ParticleUtils.js"></script>
+    <script src="lib/PhysicsRenderer.js"></script>
+    
+    <script src="lib/Loader.js"></script>
+    
+    
+    <script src="js/PageLoader.js"></script>
+    <script src="js/PageTurner.js"></script>
+    <script src="js/Page.js"></script>
+     
+    <script src="js/global/FurryGroup.js"></script>
+    <script src="js/global/FurryTail.js"></script>
+    <script src="js/global/FurryHead.js"></script>
+    <script src="js/global/PhysicsText.js"></script>
+    <script src="js/global/HandParticles.js"></script>
+    
+    <script src="js/pages/crystals/Crystal.js"></script>
+    <script src="js/pages/crystals/CrystalGeo.js"></script>
+    <script src="js/pages/crystals/CrystalHalo.js"></script>
+    <script src="js/pages/crystals/CrystalParticles.js"></script>
+    
+    <script src="js/pages/planets/Planet.js"></script>
+    
+    <script src="js/pages/tree/Tree.js"></script>
+    <script src="js/pages/tree/TreeLight.js"></script>
+    
+    <script src="js/pages/forest/Forest.js"></script>
+    <script src="js/pages/forest/Monome.js"></script>
+    <script src="js/pages/forest/ForestFloor.js"></script>
+    
+    <script src="js/pages/sparkles/Sparkles.js"></script>
+    
+    
+    
+    <script src="js/pages/fireworks/Firework.js"></script>
+    <script src="js/pages/fireworks/Water.js"></script>
+    <script src="js/pages/fireworks/Mirror.js"></script>
+    
+
+
+    <!-- THESE ALWAYS GOES LAST -->
+    <script src="js/Global.js"></script>
+
+    <!-- The Pages -->
+    <script src="js/planets.js"></script>
+    <script src="js/forest.js"></script>
+    <script src="js/crystals.js"></script>
+    <script src="js/alone.js"></script>
+    <script src="js/together.js"></script>
+    <script src="js/tree.js"></script>
+    <script src="js/sparkles.js"></script>
+
+    <script src="js/sun.js"></script>
+    <script src="js/fireworks.js"></script>
+
+
+
+    <script>
+
+      // TODO: 
+      // Write shaders for hands
+
+      G.audio.mute.gain.value = 0;
+
+
+      G.loader.addLoad();
+
+      // For Hands
+      G.shaders.load( 'global/vs-rHand' , 'rHand' , 'vertex'    );
+      G.shaders.load( 'global/fs-rHand' , 'rHand' , 'fragment'  );
+      G.shaders.load( 'global/vs-lHand' , 'lHand' , 'vertex'    );
+      G.shaders.load( 'global/fs-lHand' , 'lHand' , 'fragment'  );
+      
+      G.shaders.load( 'global/vs-handParticles' , 'handParticles' , 'vertex'      );
+      G.shaders.load( 'global/fs-handParticles' , 'handParticles' , 'fragment'    );
+      G.shaders.load( 'global/ss-handParticles' , 'handParticles' , 'simulation'  );
+
+      // For Tails
+      var f = 'global/';
+
+      G.shaders.load(  f + 'vs-furryParticles' , 'furryParticles' , 'vs' );
+      G.shaders.load(  f + 'fs-furryParticles' , 'furryParticles' , 'fs' );
+      G.shaders.load(  f + 'vs-furryTail'      , 'furryTail'      , 'vs' );
+      G.shaders.load(  f + 'fs-furryTail'      , 'furryTail'      , 'fs' );
+      G.shaders.load(  f + 'vs-furryHead'      , 'furryHead'      , 'vs' );
+      G.shaders.load(  f + 'fs-furryHead'      , 'furryHead'      , 'fs' );
+      G.shaders.load(  f + 'furryTailSim'      , 'furryTailSim'   , 'ss' );
+      G.shaders.load(  f + 'furryHeadSim'      , 'furryHeadSim'   , 'ss' );
+
+
+      // For text
+      G.shaders.load( 'global/vs-text' , 'text' , 'vertex'    );
+      G.shaders.load( 'global/fs-text' , 'text' , 'fragment'  );
+      G.shaders.load( 'global/ss-text' , 'text' , 'simulation'  );
+
+      G.shaders.shaderSetLoaded = function(){
+        G.loader.onLoad();
+      }
+
+      G.loadTextures();
+
+
+      G.pages.alone.nextPage        = G.pages.fireworks;
+      
+      G.pages.crystals.prevPage     = G.pages.alone;
+      G.pages.crystals.nextPage     = G.pages.forest;
+
+      G.pages.forest.prevPage       = G.pages.crystal;
+      G.pages.forest.nextPage       = G.pages.tree;
+
+      G.pages.tree.prevPage         = G.pages.forest;
+      G.pages.tree.nextPage         = G.pages.together;
+
+      G.pages.together.prevPage     = G.pages.tree;
+      G.pages.together.nextPage     = G.pages.planets;
+     
+      G.pages.planets.prevPage      = G.pages.together;
+      G.pages.planets.nextPage      = G.pages.sparkles;
+
+
+      G.pages.sparkles.prevPage     = G.pages.planets;
+     /* G.pages.sparkles.nextPage     = G.pages.sun;
+
+      G.pages.sun.prevPage          = G.pages.sparkles;
+      G.pages.sun.nextPage          = G.pages.fireworks;*/
+
+      G.pages.fireworks.prevPage    = G.pages.alone;
+     // G.pages.fireworks.nextPage   = G.pages.fireworks;
+
+
+
+
+
+
+      console.log( 'CC' );
+      console.log( G.pages.sun );
+      console.log( G.pages.alone );
+      
+      //console.log( G.pages.alone.nextPage );
+
+
+
+      G.addToStartArray( function(){
+
+        var s = G.pages.fireworks;
+
+        s.init();
+        s.addToOnLoadArray( function(){
+
+          this.addToStartArray(function(){
+
+            this.activate();
+
+          }.bind( this));
+
+          this.start();
+
+        }.bind( s ));
+
+      
+      }.bind( G ) );
+
+
+
+    </script>
+
+  </body>
+</html>
